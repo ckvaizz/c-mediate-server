@@ -2,12 +2,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var mongodb = require('./config/mongoConnection')
 require('dotenv').config()
+var mongodb = require('./config/mongoConnection')
 
-var indexRouter = require('./routes/index');
+var managementRouter = require('./routes/management');
 var usersRouter = require('./routes/users');
-
+var adminRouter = require('./routes/admin')
 mongodb.connect()
 var app = express();
 
@@ -17,9 +17,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/admin',adminRouter);
+app.use('/api/management', managementRouter);
+app.use('/api/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

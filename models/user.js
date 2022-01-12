@@ -6,8 +6,8 @@ let users = new Schema({
   name: String,
   mobile: Number,
   password: String,
-  block: Number,
-  reqDate: { type: Date, default: new Date() },
+  block: {type:Number,default:0},
+  regDate: { type: Date, default: new Date() },
   role: { type: Number, default: 3 },
   status: { type: String, default: "active" },
 });

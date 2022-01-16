@@ -1,7 +1,12 @@
-const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const otpclient = require("twilio")(
+  process.env.twiloAccountSID,
+  process.env.twiloAuthTOKEN
+);
 
+const User = require("../models/user");
+const RegUser = require("../models/registrationNumber");
 
 //functions
 
@@ -18,7 +23,7 @@ exports.login = async (req, res) => {
             "secret",
             { expiresIn: "365d" }
           );
-          delete user.password;
+
           res.json({
             status: true,
             profile: {
@@ -37,5 +42,115 @@ exports.login = async (req, res) => {
     } else res.json({ status: false, message: "Invalid login" });
   } catch (error) {
     res.status(500).json({ status: false, message: "something went wrong" });
+  }
+};
+
+exports.sendOtp = async (req, res) => {
+  try {
+    const { mobile } = req.body;
+
+    const user = await RegUser.findOne({ mobile });
+    if (!user)
+      res.json({
+        status: false,
+        message: "This mobile number is not available for registration",
+      });
+    else if (user.status)
+      res.json({ status: false, message: "user already registered" });
+    else {
+      const number = parseInt(mobile);
+      otpclient.verify
+        .services(process.env.twiloServiceId)
+        .verifications.create({
+          to: `+91${number}`,
+          channel: "sms",
+        })
+        .then((data) => {
+          res.json({ status: true, message: "Otp sended" });
+        })
+        .catch((err) => {
+          console.log("err", err);
+          res.json({
+            status: false,
+            message: "Failed to send otp please try again",
+          });
+        });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to send otp please try again",
+    });
+  }
+};
+
+exports.checkOtp = async (req, res) => {
+  try {
+    const { mobile, otp } = req.body;
+
+    otpclient.verify
+      .services(process.env.twiloServiceId)
+      .verificationChecks.create({
+        to: `+91${mobile}`,
+        code: otp,
+      })
+      .then(async (data) => {
+        console.log(data.status);
+        if (data.status === "approved") {
+          const user = await RegUser.findOne({ mobile });
+          await User.create({ mobile, name: user.name });
+          await RegUser.updateOne({ mobile }, { status: true });
+          res.json({ status: true, message: "Otp verified" });
+        } else {
+          res.json({ status: false, message: "Failed to verify" });
+        }
+      })
+      .catch((err) => {
+        console.log("error in verification", err);
+        res.status(500).json({
+          status: false,
+          message: "something went wrong please try again",
+        });
+      });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "something went wrong please try again",
+    });
+  }
+};
+
+exports.createPassword = async (req, res) => {
+  try {
+    const { mobile, password } = req.body;
+
+    const user = await User.findOne({ mobile });
+    if (user) {
+      const hassed = await bcrypt.hash(password, 10);
+      if (
+        (await User.updateOne({ mobile }, { password: hassed }))
+          .modifiedCount == 1
+      ) {
+        let token = jwt.sign({ mobile: user.mobile, _id: user._id }, "secret", {
+          expiresIn: "365d",
+        });
+
+        res.json({
+          status: true,
+          profile: {
+            user: {
+              name: user.name,
+              _id: user._id,
+              mobile: user.mobile,
+              status: user.status,
+              role: user.role,
+            },
+            token,
+          },
+        });
+      } else res.json({ status: false, message: "Something went wrong" });
+    } else res.json({ status: false, message: "Please verify your number" });
+  } catch (error) {
+    res.json({ status: false, message: "something went wrong" });
   }
 };

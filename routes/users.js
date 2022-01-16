@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
+const { checkSchema } = require('express-validator');
+const {auth,isManagement,checkValidator}= require('../middleware/auth')
+const {addUser}= require('../controllers/user')
+const {addUserValidator}= require('../middleware/validator')
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-  
-});
+
+router.post('/add',auth,isManagement,addUserValidator,checkValidator,addUser);
 
 module.exports = router;

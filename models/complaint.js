@@ -4,7 +4,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 let complaints = new Schema({
   userId: ObjectId,
-  date: Date,
+  date: {type:Date,default:new Date()},
   report: Number,
   reply: String,
   message: String,

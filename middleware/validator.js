@@ -16,5 +16,9 @@ module.exports = {
   createPasswordValidator:[
       check("mobile").isMobilePhone(),
       check("password").isLength({min:3})
+  ],
+  changePasswordValidator:[
+    check("oldPassword").isLength({min:3}),
+    check("newPassword").isLength({min:3})
   ]
 };

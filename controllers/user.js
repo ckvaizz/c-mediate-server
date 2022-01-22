@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const RegUser = require("../models/registrationNumber");
 const User = require("../models/user");
-
+const { checkOtpHelper, sendOtpHelper } = require("../helpers/otpHelper");
 exports.addUser = async (req, res) => {
   try {
     const { name, mobile } = req.body;
@@ -25,7 +25,7 @@ exports.changePassword = async (req, res) => {
     const user = await User.findOne({ _id: userId });
     bcrypt
       .compare(oldPassword, user.password)
-      .then(async(status) => {
+      .then(async (status) => {
         if (status) {
           let password = await bcrypt.hash(newPassword, 10);
           if (
@@ -43,3 +43,43 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ status: false, message: "something went wrong" });
   }
 };
+
+exports.sentOtp_FP = async (req, res) => {
+  const { mobile } = req.body;
+  try {
+    const user = await User.findOne({ mobile });
+    if (user) {
+      sendOtpHelper(mobile)
+        .then((data) => res.json(data))
+        .catch((err) => res.json(err));
+    } else res.json({ status: false, message: "User not registered" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: "something went wrong" });
+  }
+};
+
+exports.verifyOtp_FP =  (req, res) => {
+  try {
+    const { mobile, otp } = req.body;
+    checkOtpHelper(mobile, otp)
+      .then(async(data) => {
+        if (data.status === "approved") {
+          await User.updateOne({mobile},{otp})
+          res.json({ status: true, message: "Otp verified" });
+        } else {
+          res.json({ status: false, message: "Failed to verify" });
+        }
+      })
+      .catch((err) => {
+        console.log("error in verification FP", err);
+        res.status(500).json({
+          status: false,
+          message: "something went wrong please try again",
+        });
+      });
+  } catch (error) {
+    res.status(500).json({ status: false, message: "something went wrong" });
+  }
+};
+
+

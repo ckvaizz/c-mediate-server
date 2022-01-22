@@ -11,11 +11,12 @@ module.exports = {
   sendOtpValidator: [check("mobile").isMobilePhone()],
   checkOtpValidator: [
     check("mobile").isMobilePhone(),
-    check("otp").isLength({ min: 4 }),
+    check("otp").isLength(4),
   ],
   createPasswordValidator:[
       check("mobile").isMobilePhone(),
-      check("password").isLength({min:3})
+      check("password").isLength({min:3}),
+      check("otp").isLength(4)
   ],
   changePasswordValidator:[
     check("oldPassword").isLength({min:3}),

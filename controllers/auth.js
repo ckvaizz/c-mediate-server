@@ -1,9 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const otpclient = require("twilio")(
-  process.env.twiloAccountSID,
-  process.env.twiloAuthTOKEN
-);
+const { sendOtpHelper,checkOtpHelper } = require("../helpers/otpHelper");
 
 const User = require("../models/user");
 const RegUser = require("../models/registrationNumber");
@@ -59,21 +56,12 @@ exports.sendOtp = async (req, res) => {
       res.json({ status: false, message: "user already registered" });
     else {
       const number = parseInt(mobile);
-      otpclient.verify
-        .services(process.env.twiloServiceId)
-        .verifications.create({
-          to: `+91${number}`,
-          channel: "sms",
-        })
+      sendOtpHelper(number)
         .then((data) => {
-          res.json({ status: true, message: "Otp sended" });
+          res.json(data);
         })
         .catch((err) => {
-          console.log("err", err);
-          res.json({
-            status: false,
-            message: "Failed to send otp please try again",
-          });
+          res.json(data);
         });
     }
   } catch (err) {
@@ -88,17 +76,12 @@ exports.checkOtp = async (req, res) => {
   try {
     const { mobile, otp } = req.body;
 
-    otpclient.verify
-      .services(process.env.twiloServiceId)
-      .verificationChecks.create({
-        to: `+91${mobile}`,
-        code: otp,
-      })
+    checkOtpHelper(mobile,otp)
       .then(async (data) => {
         console.log(data.status);
         if (data.status === "approved") {
           const user = await RegUser.findOne({ mobile });
-          await User.create({ mobile, name: user.name });
+          await User.create({ mobile, name: user.name,otp });
           await RegUser.updateOne({ mobile }, { status: true });
           res.json({ status: true, message: "Otp verified" });
         } else {
@@ -122,9 +105,9 @@ exports.checkOtp = async (req, res) => {
 
 exports.createPassword = async (req, res) => {
   try {
-    const { mobile, password } = req.body;
+    const { mobile, password,otp } = req.body;
 
-    const user = await User.findOne({ mobile });
+    const user = await User.findOne({ mobile,otp });
     if (user) {
       const hassed = await bcrypt.hash(password, 10);
       if (

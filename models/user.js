@@ -10,6 +10,7 @@ let users = new Schema({
   regDate: { type: Date, default: new Date() },
   role: { type: Number, default: 3 },
   status: { type: String, default: "active" },
+  otp:String
 });
 
 const model = mongoose.model("Users", users);

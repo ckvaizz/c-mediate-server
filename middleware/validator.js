@@ -1,4 +1,5 @@
 const { check } = require("express-validator");
+
 module.exports = {
   addUserValidator: [
     check("mobile").isMobilePhone(),
@@ -21,5 +22,24 @@ module.exports = {
   changePasswordValidator:[
     check("oldPassword").isLength({min:3}),
     check("newPassword").isLength({min:3})
+  ],
+  addSuggestionValidator:[
+    check("message").isLength({min:3})
+  ],
+  editSuggestionValidator:[
+    check("_id").isMongoId(),
+    check("message").isLength({min:3})
+  ],
+  deleteValidator:[
+    check("_id").isMongoId()
+  ],
+  blockSuggestionValidation:[
+    check("_id").isMongoId(),
+    check("status").isBoolean()
+  ],
+  addComplaintValidator:[
+    check("message").exists().notEmpty(),
+    check("image").optional().isObject(),
+    
   ]
 };

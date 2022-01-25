@@ -9,7 +9,10 @@ let complaints = new Schema({
   reply: String,
   message: String,
   status: { type: String, default: "active" },
-  imageUrl: String,
+  image:{
+    id:String,
+    url:String
+  },
 });
 
 const model = mongoose.model("Complaints", complaints);

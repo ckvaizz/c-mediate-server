@@ -7,8 +7,14 @@ let announcements = new Schema({
   message: String,
   addedDate: { type: Date, default: new Date() },
   dueDate: Date,
-  imageUrl: String,
-  pdfUrl: String,
+  image: {
+    id:String,
+    url:String
+  },
+  pdf: {
+    id:String,
+    url:String
+  },
 });
 
 const model = mongoose.model("Announcements", announcements);

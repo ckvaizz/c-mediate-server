@@ -53,27 +53,31 @@ exports.blockSuggestion = async (req, res) => {
   }
 };
 
-exports.getSuggestion=async(req,res)=>{
-    try {
-        const {status}=req.params
-        const {userId}=req
-        if(status==='All'){
-          const suggestions =  await Suggestion.find({status:true}).sort({_id:-1})
-           res.json({status:true,suggestions})
-        }else if(status==='own'){
-            const suggestions =  await Suggestion.find({userId}).sort({_id:-1})
-            res.json({status:true,suggestions})
-        }else  res.json({status:false,message:'Unknown params ...'})
-    } catch (error) {
-        res.json({status:false,message:'something went wrong'})
-    }
-}
+exports.getSuggestion = async (req, res) => {
+  try {
+    const { status } = req.params;
+    const { userId } = req;
+    if (status === "All") {
+      const suggestions = await Suggestion.find({ status: true }).sort({
+        _id: -1,
+      });
+      res.json({ status: true, suggestions });
+    } else if (status === "own") {
+      const suggestions = await Suggestion.find({ userId }).sort({ _id: -1 });
+      res.json({ status: true, suggestions });
+    } else res.json({ status: false, message: "Unknown params ..." });
+  } catch (error) {
+    res.json({ status: false, message: "something went wrong" });
+  }
+};
 
-exports.getAllBlockedSuggestion=async(req,res)=>{
-    try {
-        const suggestion= await Suggestion.find({status:false}).sort({_id:-1})
-        res.json({status:true,suggestion})
-    } catch (error) {
-        res.json({status:false,message:'something went wrong'})
-    }
-}
+exports.getAllBlockedSuggestion = async (req, res) => {
+  try {
+    const suggestion = await Suggestion.find({ status: false }).sort({
+      _id: -1,
+    });
+    res.json({ status: true, suggestion });
+  } catch (error) {
+    res.json({ status: false, message: "something went wrong" });
+  }
+};

@@ -4,7 +4,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 require("dotenv").config();
 var mongodb = require("./config/mongoConnection");
-
+const cors = require('cors')
 //REQUIRE ROUTERS
 
 var adminRouter = require("./routes/admin");
@@ -22,6 +22,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  cors({
+    origin: true, // <-- location of the react app were connecting to
+    credentials: true,
+  })
+);
+
 
 app.use("/api/admin", adminRouter);
 app.use("/api/user", userRouter);

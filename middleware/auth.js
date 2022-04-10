@@ -38,6 +38,7 @@ exports.isAdmin = (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({status:false,message:"something went wrong"})
   }
 };
 
@@ -56,6 +57,7 @@ exports.isManagement = (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({status:false,message:"something went wrong"})
   }
 };
 

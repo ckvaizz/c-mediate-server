@@ -1,4 +1,4 @@
-const { reject } = require("bcrypt/promises");
+
 
 const otpclient = require("twilio")(
   process.env.twiloAccountSID,

@@ -7,12 +7,16 @@ const {
   changePassword,
   sentOtp_FP,
   verifyOtp_FP,
+  unBlockUser,
+  editManagement,
 } = require("../controllers/user");
 const {
   addUserValidator,
   changePasswordValidator,
   sendOtpValidator,
   checkOtpValidator,
+  idValidator,
+  editManagementValidator,
 } = require("../middleware/validator");
 
 
@@ -42,4 +46,7 @@ router.post(
   verifyOtp_FP
 );
 
+router.post('/unblock',auth,isManagement,idValidator,checkValidator,unBlockUser)
+
+router.post('/managementEdit',auth,isManagement,editManagementValidator,checkValidator,editManagement)
 module.exports = router;

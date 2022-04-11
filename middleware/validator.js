@@ -61,5 +61,13 @@ module.exports = {
     check("image").optional().isObject(),
     check("pdf").optional().isObject(),
     check("_id").isMongoId()
+  ],
+  idValidator:[
+    check('_id').exists().notEmpty().isMongoId()
+  ],
+  editManagementValidator:[
+    check('_id').exists().notEmpty().isMongoId(),
+    check('name').exists().notEmpty(),
+    check('mobile').exists().notEmpty()
   ]
 };

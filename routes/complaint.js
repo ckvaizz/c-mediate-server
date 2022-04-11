@@ -1,6 +1,11 @@
 var express = require("express");
 var router = express.Router();
-const { auth, checkValidator, isManagement } = require("../middleware/auth");
+const {
+  auth,
+  checkValidator,
+  isManagement,
+  checkUserPermission,
+} = require("../middleware/auth");
 const {
   addComplaintValidator,
   editComplaintValidator,
@@ -20,11 +25,19 @@ const {
 } = require("../controllers/complaint");
 
 /* GET home page. */
-router.post("/add", auth, addComplaintValidator, checkValidator, addComplaint);
+router.post(
+  "/add",
+  auth,
+  checkUserPermission,
+  addComplaintValidator,
+  checkValidator,
+  addComplaint
+);
 
 router.post(
   "/edit",
   auth,
+  checkUserPermission,
   editComplaintValidator,
   checkValidator,
   editComplaint
@@ -50,7 +63,14 @@ router.post(
   replyComplaint
 );
 
-router.post("/report", auth, deleteValidator, checkValidator, reportComplaint);
+router.post(
+  "/report",
+  auth,
+  checkUserPermission,
+  deleteValidator,
+  checkValidator,
+  reportComplaint
+);
 
 router.post(
   "/unblock",

@@ -64,5 +64,10 @@ module.exports = {
   ],
   idValidator:[
     check('_id').exists().notEmpty().isMongoId()
+  ],
+  editManagementValidator:[
+    check('_id').exists().notEmpty().isMongoId(),
+    check('name').exists().notEmpty(),
+    check('mobile').exists().notEmpty()
   ]
 };

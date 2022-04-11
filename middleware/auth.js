@@ -38,7 +38,7 @@ exports.isAdmin = (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({status:false,message:"something went wrong"})
+    res.status(500).json({ status: false, message: "something went wrong" });
   }
 };
 
@@ -57,7 +57,7 @@ exports.isManagement = (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({status:false,message:"something went wrong"})
+    res.status(500).json({ status: false, message: "something went wrong" });
   }
 };
 
@@ -68,6 +68,24 @@ exports.checkValidator = (req, res, next) => {
     if (errors.isEmpty()) next();
     else
       res.status(400).json({ status: false, message: " Missing some datas" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: "something went wrong" });
+  }
+};
+
+exports.checkUserPermission = (req, res, next) => {
+  try {
+    User.findOne({ _id: ObjectId(req.userId) })
+      .then((user) => {
+        if (user.status === "active") next();
+        else
+          res.json({
+            status: false,
+            message: "permission denied",
+            reLogin: true,
+          });
+      })
+      .catch((e) => res.json({ status: false, message: "something wrong" }));
   } catch (error) {
     res.status(500).json({ status: false, message: "something went wrong" });
   }

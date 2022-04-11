@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { auth, checkValidator, isManagement } = require("../middleware/auth");
+const { auth, checkValidator, isManagement, checkUserPermission } = require("../middleware/auth");
 const {
   addSuggestionValidator,
   editSuggestionValidator,
@@ -19,6 +19,7 @@ const {
 router.post(
   "/add",
   auth,
+  checkUserPermission,
   addSuggestionValidator,
   checkValidator,
   addSuggestion
@@ -26,11 +27,12 @@ router.post(
 router.post(
   "/edit",
   auth,
+  checkUserPermission,
   editSuggestionValidator,
   checkValidator,
   editSuggestion
 );
-router.post("/delete", auth, deleteValidator, checkValidator, deleteSuggestion);
+router.post("/delete", auth,checkUserPermission, deleteValidator, checkValidator, deleteSuggestion);
 router.post(
   "/block",
   auth,

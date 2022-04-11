@@ -58,13 +58,13 @@ exports.sentOtp_FP = async (req, res) => {
   }
 };
 
-exports.verifyOtp_FP =  (req, res) => {
+exports.verifyOtp_FP = (req, res) => {
   try {
     const { mobile, otp } = req.body;
     checkOtpHelper(mobile, otp)
-      .then(async(data) => {
+      .then(async (data) => {
         if (data.status === "approved") {
-          await User.updateOne({mobile},{otp})
+          await User.updateOne({ mobile }, { otp });
           res.json({ status: true, message: "Otp verified" });
         } else {
           res.json({ status: false, message: "Failed to verify" });
@@ -82,4 +82,30 @@ exports.verifyOtp_FP =  (req, res) => {
   }
 };
 
+exports.unBlockUser = async (req, res) => {
+  try {
+    const { _id } = req.body;
+    if (
+      (await User.updateOne({ _id }, { status: "active" })).modifiedCount === 1
+    )
+      res.json({ status: true, message: "successfully unblocked" });
+    else res.json({ status: false, message: "failed to unblock" });
+  } catch (error) {
+    res.json({ status: false, message: "something wrong" });
+  }
+};
 
+exports.editManagement = async (req, res) => {
+  try {
+    const { _id, name, mobile } = req.body;
+    const user = await User.findOne({ mobile, role: 3 });
+
+    if (user)
+      return res.json({ status: false, message: "mobile exist with user" });
+    if ((await User.updateOne({ _id }, { name, mobile })).modifiedCount === 1)
+      res.json({ status: true, message: "updated" });
+    else res.json({ status: false, message: "failed to update data" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: "something wrong" });
+  }
+};

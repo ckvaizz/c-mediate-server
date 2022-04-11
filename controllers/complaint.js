@@ -121,7 +121,7 @@ exports.reportComplaint = async (req, res) => {
     ) {
       const com = await Complaint.findOne({ _id }).select("report");
 
-      if (com.report === 10)
+      if (com.report % 10===0)
         await Complaint.updateOne({ _id }, { status: "blocked" });
 
       res.json({ status: true });
@@ -135,8 +135,12 @@ exports.unBlockComplaint = async (req, res) => {
   try {
     const { _id } = req.body;
     if (
-      (await Complaint.updateOne({ _id,status:'blocked' }, { status: "active" }))
-        .modifiedCount === 1
+      (
+        await Complaint.updateOne(
+          { _id, status: "blocked" },
+          { status: "active" }
+        )
+      ).modifiedCount === 1
     )
       res.json({ status: true });
     else res.json({ status: false, message: "Failed to unblock " });

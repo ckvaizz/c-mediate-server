@@ -51,7 +51,7 @@ exports.getComplaint = async (req, res) => {
     const { userId } = req;
 
     if (status === "All") {
-      const complaint = await Complaint.find({ status: "active" })
+      const complaint = await Complaint.find({ status: "active" ,userId :{$ne:userId}})
         .sort({ _id: -1 })
         .select(["message", "image", "_id", "date"]);
       res.json({ status: true, complaint });

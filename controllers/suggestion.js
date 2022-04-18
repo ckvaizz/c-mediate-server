@@ -58,7 +58,7 @@ exports.getSuggestion = async (req, res) => {
     const { status } = req.params;
     const { userId } = req;
     if (status === "All") {
-      const suggestions = await Suggestion.find({ status: true }).sort({
+      const suggestions = await Suggestion.find({ status: true,userId :{$ne:userId} }).sort({
         _id: -1,
       });
       res.json({ status: true, suggestions });

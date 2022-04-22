@@ -7,6 +7,7 @@ let users = new Schema({
   mobile: Number,
   password: String,
   block: {type:Number,default:0},
+  blockedDate:Date,
   regDate: { type: Date, default: new Date() },
   role: { type: Number, default: 3 },
   status: { type: String, default: "active" },

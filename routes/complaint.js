@@ -11,6 +11,7 @@ const {
   editComplaintValidator,
   deleteValidator,
   replyValidator,
+  idValidator,
 } = require("../middleware/validator");
 const {
   addComplaint,
@@ -84,5 +85,7 @@ router.post(
 router.get("/get/:status", auth, getComplaint);
 
 router.get("/getAllBlocked", auth, isManagement, getAllBlockedComplaint);
+
+router.post("/solve",auth,isManagement,idValidator,checkValidator,sloveComplaint)
 
 module.exports = router;

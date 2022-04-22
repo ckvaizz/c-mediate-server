@@ -26,7 +26,7 @@ exports.blockComplaint = async (req, res) => {
       ).select("block");
       if (user.block % 10 === 0) {
         if (
-          (await User.updateOne({ _id: user._id }, { status: "blocked" }))
+          (await User.updateOne({ _id: user._id }, { status: "blocked" ,blockedDate:new Date()}))
             .modifiedCount === 1
         ) {
           resp = { status: true, message: "user blocked by too many reports" };

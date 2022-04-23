@@ -1,4 +1,4 @@
-const req = require("express/lib/request");
+
 const Suggestion = require("../models/suggestion");
 
 exports.addSuggestion = async (req, res) => {
@@ -81,3 +81,12 @@ exports.getAllBlockedSuggestion = async (req, res) => {
     res.json({ status: false, message: "something went wrong" });
   }
 };
+
+exports.getAllSuggestion=async(req,res)=>{
+  try {
+    const suggestion=await Suggestion.find({status:true}).sort({_id:-1})
+    res.json({status:true,suggestion})
+  } catch (error) {
+    res.status(500).json({status:false,message:'something wrong'})
+  }
+}

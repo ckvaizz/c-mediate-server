@@ -13,7 +13,8 @@ const {
   deleteSuggestion,
   blockSuggestion,
   getSuggestion,
-  getAllBlockedSuggestion
+  getAllBlockedSuggestion,
+  getAllSuggestion
 } = require("../controllers/suggestion");
 
 router.post(
@@ -44,5 +45,5 @@ router.post(
 
 router.get('/get/:status',auth,getSuggestion)
 router.get('/getAllBlocked',auth,isManagement,getAllBlockedSuggestion)
-
+router.get('/getAll',auth,isManagement,getAllSuggestion)
 module.exports = router;

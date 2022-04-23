@@ -9,6 +9,7 @@ const {
   verifyOtp_FP,
   unBlockUser,
   editManagement,
+  getUsers,
 } = require("../controllers/user");
 const {
   addUserValidator,
@@ -49,4 +50,6 @@ router.post(
 router.post('/unblock',auth,isManagement,idValidator,checkValidator,unBlockUser)
 
 router.post('/managementEdit',auth,isManagement,editManagementValidator,checkValidator,editManagement)
+
+router.get('/get/:status',auth,isManagement,getUsers)
 module.exports = router;

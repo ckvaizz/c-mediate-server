@@ -109,3 +109,18 @@ exports.editManagement = async (req, res) => {
     res.status(500).json({ status: false, message: "something wrong" });
   }
 };
+
+exports.getUsers = async (req, res) => {
+  try {
+    const { status } = req.params;
+    if (status === "All") {
+      const profile = await RegUser.find();
+      res.json({ status: true, profile });
+    } else if (status === "Blocked") {
+      const profile = await User.find({ role: 3, status: "blocked" });
+      res.json({ status: true, profile });
+    }
+  } catch (error) {
+    res.status(500).json({ status: false, message: "something wrong" });
+  }
+};

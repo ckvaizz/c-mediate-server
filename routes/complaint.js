@@ -23,6 +23,7 @@ const {
   replyComplaint,
   reportComplaint,
   unBlockComplaint,
+  sloveComplaint,
 } = require("../controllers/complaint");
 
 /* GET home page. */
@@ -85,6 +86,8 @@ router.post(
 router.get("/get/:status", auth, getComplaint);
 
 router.get("/getAllBlocked", auth, isManagement, getAllBlockedComplaint);
+
+router.get('/getAllComplaints',auth,isManagement,getAllComplaints)
 
 router.post("/solve",auth,isManagement,idValidator,checkValidator,sloveComplaint)
 

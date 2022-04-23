@@ -51,9 +51,12 @@ exports.getComplaint = async (req, res) => {
     const { userId } = req;
 
     if (status === "All") {
-      const complaint = await Complaint.find({ status: "active" ,userId :{$ne:userId}})
+      const complaint = await Complaint.find({
+        status: "active",
+        userId: { $ne: userId },
+      })
         .sort({ _id: -1 })
-        .select(["message", "image", "_id", "date","reply"]);
+        .select(["message", "image", "_id", "date"]);
       res.json({ status: true, complaint });
     } else if (status === "Own") {
       const complaint = await Complaint.find({ userId }).sort({ _id: -1 });
@@ -121,7 +124,7 @@ exports.reportComplaint = async (req, res) => {
     ) {
       const com = await Complaint.findOne({ _id }).select("report");
 
-      if (com.report % 10===0)
+      if (com.report % 10 === 0)
         await Complaint.updateOne({ _id }, { status: "blocked" });
 
       res.json({ status: true });
@@ -149,12 +152,27 @@ exports.unBlockComplaint = async (req, res) => {
   }
 };
 
-exports.sloveComplaint=async(req,res)=>{
+exports.sloveComplaint = async (req, res) => {
   try {
-    const {_id}=req.body;
-    if((await Complaint.updateOne({_id},{status:'solved'})).modifiedCount==1) res.json({status:true,message:'complaint solved'})
-    else res.json({status:false,message:'failed to solve '})
+    const { _id } = req.body;
+    if (
+      (await Complaint.updateOne({ _id }, { status: "solved" }))
+        .modifiedCount == 1
+    )
+      res.json({ status: true, message: "complaint solved" });
+    else res.json({ status: false, message: "failed to solve " });
   } catch (error) {
-    res.status(500).json({status:false,message:'something wrong..'})
+    res.status(500).json({ status: false, message: "something wrong.." });
   }
-}
+};
+
+exports.getAllComplaints = async (req, res) => {
+  try {
+    const complaint = await Complaint.find({ status: { $ne: "blocked" } })
+      .sort({ _id: -1 })
+      .select(["message", "image", "_id", "date", "reply"]);
+      res.json({status:true,complaint})
+  } catch (error) {
+    res.status(500).json({ status: false, message: "somthing went wrong" });
+  }
+};

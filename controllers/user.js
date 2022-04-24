@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const RegUser = require("../models/registrationNumber");
 const User = require("../models/user");
+const Complaint = require('../models/complaint')
 const { checkOtpHelper, sendOtpHelper } = require("../helpers/otpHelper");
+
 exports.addUser = async (req, res) => {
   try {
     const { name, mobile } = req.body;
@@ -133,3 +135,17 @@ exports.getUsers = async (req, res) => {
     res.status(500).json({ status: false, message: "something wrong" });
   }
 };
+
+exports.deleteAllOld=async(req,res)=>{
+  try {
+    const {profiles}=req.body
+    let Ids =[]
+    profiles.map((pro)=>{
+      let id = await Complaint.find({userId:pro._id}).select('image.id')
+      Ids = Ids.concat(id)
+    })
+    res.json({Ids})
+  } catch (error) {
+    res.status(500).json({status:false,message:'something wrong'})
+  }
+}

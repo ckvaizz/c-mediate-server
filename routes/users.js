@@ -52,4 +52,6 @@ router.post('/unblock',auth,isManagement,idValidator,checkValidator,unBlockUser)
 router.post('/managementEdit',auth,isManagement,editManagementValidator,checkValidator,editManagement)
 
 router.get('/get/:status',auth,isManagement,getUsers)
+
+router.post('/delete/allOld',auth,isManagement,deleteAllOld)
 module.exports = router;

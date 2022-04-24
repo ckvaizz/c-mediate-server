@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const RegUser = require("../models/registrationNumber");
 const User = require("../models/user");
-const Complaint = require('../models/complaint')
+const Complaint = require("../models/complaint");
+const Suggestion = require("../models/suggestion");
 const { checkOtpHelper, sendOtpHelper } = require("../helpers/otpHelper");
 
 exports.addUser = async (req, res) => {
@@ -125,7 +126,11 @@ exports.getUsers = async (req, res) => {
       const user = await RegUser.find();
       let oldUsers = [];
       user.map((element) => {
-        if ((new Date().getFullYear() - new Date(element?.addedDate).getFullYear()) >= 3) {
+        if (
+          new Date().getFullYear() -
+            new Date(element?.addedDate).getFullYear() >=
+          3
+        ) {
           oldUsers.push(element);
         }
       });
@@ -136,16 +141,39 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-exports.deleteAllOld=async(req,res)=>{
+exports.deleteAllOld = async (req, res) => {
   try {
-    const {profiles}=req.body
-    let Ids =[]
-    profiles.map((pro)=>{
-      let id = await Complaint.find({userId:pro._id}).select('image.id')
-      Ids = Ids.concat(id)
-    })
-    res.json({Ids})
+    const { profile } = req.body;
+    let Ids = [];
+    let regId = [];
+    for (let y in profile) {
+      let rgId = await User.findOne({ mobile: profile[y].mobile }).select([
+        "_id",
+        "mobile",
+      ]);
+
+      if (rgId) regId.push(rgId);
+    }
+    for (let i in regId) {
+      let id = await Complaint.find({ userId: regId[i]._id }).select(
+        "image.id"
+      );
+      let imgId = [];
+      for (let x in id) {
+        if (id[x].image.id !== undefined) {
+          imgId.push(id[x]?.image?.id && id[x]?.image?.id);
+        }
+      }
+      Ids = Ids.concat(imgId);
+      await RegUser.deleteOne({ mobile: regId[i].mobile });
+      await User.deleteOne({ mobile: regId[i].mobile });
+      await Complaint.deleteMany({ userId: regId[i]._id });
+      await Suggestion.deleteMany({ userId: regId[i]._id });
+    }
+
+    res.json({status:true, Ids });
   } catch (error) {
-    res.status(500).json({status:false,message:'something wrong'})
+    console.log(error);
+    res.status(500).json({ status: false, message: "something wrong" });
   }
-}
+};

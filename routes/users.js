@@ -10,6 +10,7 @@ const {
   unBlockUser,
   editManagement,
   getUsers,
+  deleteAllOld,
 } = require("../controllers/user");
 const {
   addUserValidator,

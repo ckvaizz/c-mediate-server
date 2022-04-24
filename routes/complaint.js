@@ -24,6 +24,7 @@ const {
   reportComplaint,
   unBlockComplaint,
   sloveComplaint,
+  getAllComplaints,
 } = require("../controllers/complaint");
 
 /* GET home page. */

@@ -119,7 +119,16 @@ exports.getUsers = async (req, res) => {
     } else if (status === "Blocked") {
       const profile = await User.find({ role: 3, status: "blocked" });
       res.json({ status: true, profile });
-    }
+    } else if (status === "Old") {
+      const user = await RegUser.find();
+      let oldUsers = [];
+      user.map((element) => {
+        if ((new Date().getFullYear() - new Date(element?.addedDate).getFullYear()) >= 3) {
+          oldUsers.push(element);
+        }
+      });
+      res.json({ status: true, profile: oldUsers });
+    } else res.json({ status: false, message: "invalid option" });
   } catch (error) {
     res.status(500).json({ status: false, message: "something wrong" });
   }

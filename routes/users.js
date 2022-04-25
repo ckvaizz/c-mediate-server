@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { checkSchema } = require("express-validator");
+
 const { auth, isManagement, checkValidator } = require("../middleware/auth");
 const {
   addUser,
@@ -11,6 +11,7 @@ const {
   editManagement,
   getUsers,
   deleteAllOld,
+  editUser,
 } = require("../controllers/user");
 const {
   addUserValidator,
@@ -18,10 +19,8 @@ const {
   sendOtpValidator,
   checkOtpValidator,
   idValidator,
-  editManagementValidator,
+  editUserValidator,
 } = require("../middleware/validator");
-
-
 
 router.post(
   "/add",
@@ -48,11 +47,35 @@ router.post(
   verifyOtp_FP
 );
 
-router.post('/unblock',auth,isManagement,idValidator,checkValidator,unBlockUser)
+router.post(
+  "/unblock",
+  auth,
+  isManagement,
+  idValidator,
+  checkValidator,
+  unBlockUser
+);
 
-router.post('/managementEdit',auth,isManagement,editManagementValidator,checkValidator,editManagement)
+router.post(
+  "/managementEdit",
+  auth,
+  isManagement,
+  editUserValidator,
+  checkValidator,
+  editManagement
+);
 
-router.get('/get/:status',auth,isManagement,getUsers)
+router.get("/get/:status", auth, isManagement, getUsers);
 
-router.post('/delete/allOld',auth,isManagement,deleteAllOld)
+router.post("/delete/allOld", auth, isManagement, deleteAllOld);
+
+router.post(
+  "/edit",
+  auth,
+  isManagement,
+  editUserValidator,
+  checkValidator,
+  editUser
+);
+
 module.exports = router;

@@ -7,10 +7,7 @@ let announcements = new Schema({
   message: String,
   addedDate: { type: Date, default: new Date() },
   dueDate: Date,
-  image: {
-    id:String,
-    url:String
-  },
+  
   pdf: {
     id:String,
     url:String

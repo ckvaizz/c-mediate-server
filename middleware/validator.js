@@ -51,21 +51,19 @@ module.exports = {
     check("title").trim().exists().notEmpty(),
     check("message").trim().exists().notEmpty(),
     check("dueDate").exists().notEmpty(),
-    check("image").optional().isObject(),
-    check("pdf").optional().isObject()
+     check("pdf").optional().isObject()
   ],
   editAnnouncementValidator:[
     check("title").trim().exists().notEmpty(),
     check("message").trim().exists().notEmpty(),
     check("dueDate").exists().notEmpty(),
-    check("image").optional().isObject(),
     check("pdf").optional().isObject(),
     check("_id").isMongoId()
   ],
   idValidator:[
     check('_id').exists().notEmpty().isMongoId()
   ],
-  editManagementValidator:[
+  editUserValidator:[
     check('_id').exists().notEmpty().isMongoId(),
     check('name').exists().notEmpty(),
     check('mobile').exists().notEmpty()

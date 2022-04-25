@@ -2,15 +2,13 @@ const Announcement = require("../models/announcement");
 
 exports.addAnnouncement = async (req, res) => {
   try {
-    const { title, message, dueDate, image, pdf } = req.body;
+    const { title, message, dueDate,  pdf } = req.body;
     const data = {
       title,
       message,
       dueDate,
     };
-    if (image)
-      if (image.id && image.url) data["image"] = image;
-      else res.json({ status: false, message: "missing data" });
+    
     if (pdf)
       if (pdf.url && pdf.id) data["pdf"] = pdf;
       else res.json({ status: false, message: "missing data" });
@@ -23,15 +21,13 @@ exports.addAnnouncement = async (req, res) => {
 
 exports.editAnnouncement = async (req, res) => {
   try {
-    const { _id, title, message, dueDate, image, pdf } = req.body;
+    const { _id, title, message, dueDate,  pdf } = req.body;
     const data = {
       title,
       message,
       dueDate,
     };
-    if (image)
-      if (image.id && image.url) data["image"] = image;
-      else res.json({ status: false, message: "missing data" });
+   
     if (pdf)
       if (pdf.url && pdf.id) data["pdf"] = pdf;
       else res.json({ status: false, message: "missing data" });

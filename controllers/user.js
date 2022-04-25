@@ -171,9 +171,28 @@ exports.deleteAllOld = async (req, res) => {
       await Suggestion.deleteMany({ userId: regId[i]._id });
     }
 
-    res.json({status:true, Ids });
+    res.json({ status: true, Ids });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ status: false, message: "something wrong" });
+  }
+};
+
+exports.editUser = async (req, res) => {
+  try {
+    const { _id, name, mobile } = req.body;
+    const user = await RegUser.findOne({ mobile, $ne: { _id } });
+    if (user)
+      return res.json({ status: false, message: "mobile exist with user" });
+    const regUser = await RegUser.findOne({ _id });
+    if (
+      (await RegUser.updateOne({ _id }, { name, mobile })).modifiedCount === 1
+    ) {
+      if (regUser.status)
+        await User.updateOne({ mobile: regUser.mobile }, { name, mobile });
+      res.json({ status: true });
+    } else res.json({ status: false, message: "failed to edit" });
+  } catch (error) {
     res.status(500).json({ status: false, message: "something wrong" });
   }
 };

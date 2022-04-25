@@ -7,11 +7,11 @@ const { checkOtpHelper, sendOtpHelper } = require("../helpers/otpHelper");
 
 exports.addUser = async (req, res) => {
   try {
-    const { name, mobile } = req.body;
+    const { name, mobile ,role} = req.body;
     const user = await RegUser.findOne({ mobile });
     if (user) res.json({ status: false, message: "mobile is already added" });
     else {
-      await RegUser.create({ name, mobile });
+      await RegUser.create({ name, mobile ,role});
       res.json({ status: true });
     }
   } catch (err) {
@@ -123,7 +123,7 @@ exports.getUsers = async (req, res) => {
       const profile = await User.find({ role: 3, status: "blocked" });
       res.json({ status: true, profile });
     } else if (status === "Old") {
-      const user = await RegUser.find();
+      const user = await RegUser.find({role:'student'});
       let oldUsers = [];
       user.map((element) => {
         if (
@@ -135,7 +135,11 @@ exports.getUsers = async (req, res) => {
         }
       });
       res.json({ status: true, profile: oldUsers });
-    } else res.json({ status: false, message: "invalid option" });
+    }else if(status ==='staff'){
+      const user = await RegUser.find({role:'student'})
+      res.json({status:true,profile:user})
+    } 
+    else res.json({ status: false, message: "invalid option" });
   } catch (error) {
     res.status(500).json({ status: false, message: "something wrong" });
   }

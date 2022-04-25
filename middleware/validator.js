@@ -5,6 +5,7 @@ module.exports = {
   addUserValidator: [
     check("mobile").isMobilePhone(),
     check("name").trim().isLength({ min: 3 }).exists(),
+    check("role").trim().exists().notEmpty().isIn(['student','staff'])
   ],
   loginValidator: [
     check("mobile").isMobilePhone(),
